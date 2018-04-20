@@ -15,6 +15,25 @@ namespace Nexcess\Sdk\Util;
 class Util {
 
   /**
+   * Looks up a value at given path in an array (if it exists).
+   *
+   * @param array $subject The subject array
+   * @param string $path Dot-delimited path of keys to follow
+   * @return mixed The value at the given path if it exists; null otherwise
+   */
+  public static function dig(array $subject, string $path) {
+    foreach (explode('.', $path) as $key) {
+      if (! isset($subject[$key])) {
+        return null;
+      }
+
+      $subject = $subject[$key];
+    }
+
+    return $subject;
+  }
+
+  /**
    * Merges arrays recursively, but never merges non-array values.
    * @see https://gist.github.com/adrian-enspired/e766b37334130ea04eaf
    *

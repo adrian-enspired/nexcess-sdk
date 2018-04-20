@@ -4,9 +4,15 @@
   "json_decode_failure": "Error parsing json: {error}",
   "invalid_language_map": "Language map must contain key:translation pairs; found: {invalid}",
   "missing_api_token": "Missing API Token",
-  "not_implemented": "Feature not yet implmented",
+  "missing_id": "Cannot read {model}: no ID provided",
+  "not_implemented": "{class}::{method} not yet implmented",
   "no_such_endpoint": "No endpoint '{name}' exists",
+  "no_such_model": "No model '{model}' exists",
+  "no_such_property": "No property '{name}' exists on {model}",
+  "readonly_model": "Cannot create or modify read-only model '{model}'",
+  "readonly_property": "Cannot write to read-only property '{model}::{name}'",
   "request_failed": "API request failed: {__rootMessage__}",
   "server_error": "API host failed to handle request: {__rootMessage__}",
+  "sync_failed": "Failed to sync {model}::{id} with API response: {__rootMessage__}",
   "unknown_error": "Unknown error: {__rootMessage__}"
 }

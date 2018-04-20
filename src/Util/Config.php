@@ -52,7 +52,7 @@ class Config {
    * @return mixed Option value on success; null otherwise
    */
   public function get(string $name) {
-    return $this->_options[$name] ?? $this->getDefault($name);
+    return Util::dig($this->_options, $name) ?? $this->getDefault($name);
   }
 
   /**
@@ -62,7 +62,7 @@ class Config {
    * @return mixed Option value on success; null otherwise
    */
   public function getDefault(string $name) {
-    $const = 'static::DEFAULT_' . strtoupper($name);
+    $const = 'static::DEFAULT_' . strtoupper(str_replace('.', '_', $name));
     return defined($const) ? constant($const) : null;
   }
 

@@ -27,15 +27,11 @@ class ApiException extends Exception {
   /** @var int Other guzzle problem. */
   const REQUEST_FAILED = 4;
 
-  /** @var int Unknown endpoint. */
-  const NO_SUCH_ENDPOINT = 5;
-
-  /** @var array[] {@inheritDoc} */
+  /** {@inheritDoc} */
   const INFO = [
     self::CANNOT_CONNECT => ['message' => 'cannot_connect'],
     self::BAD_REQUEST => ['message' => 'bad_request'],
     self::SERVER_ERROR => ['message' => 'server_error'],
-    self::REQUEST_FAILED => ['message' => 'request_failed'],
-    self::NO_SUCH_ENDPOINT => ['message' => 'no_such_endpoint']
+    self::REQUEST_FAILED => ['message' => 'request_failed']
   ];
 }
