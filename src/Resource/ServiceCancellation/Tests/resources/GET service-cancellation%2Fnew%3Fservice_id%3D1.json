@@ -1,0 +1,372 @@
+{
+	"request_date": 1531394531,
+	"scheduled_date": 1534910400,
+	"commit_date": 0,
+	"status": "pending",
+	"id": 0,
+	"identity": "Cancellation: magento.example.com - nc.xsmall-test",
+	"is_real": false,
+	"service": {
+		"id": 1,
+		"identity": "magento.example.com - nc.xsmall-test",
+		"is_real": true,
+		"meta": {
+			"scope": "service"
+		},
+		"type": "virt-guest-cloud",
+		"status": "enabled",
+		"description": "nc.xsmall-test",
+		"nickname": "",
+		"host": "magento.example.com",
+		"cloud_account": {
+			"account_id": 1,
+			"host_id": 614,
+			"domain": "magento.example.com",
+			"status": "used",
+			"deploy_date": 1529674314,
+			"deploy_complete_date": 1529674349,
+			"project_id": 847,
+			"parent_account_id": 0,
+			"reference_account_id": 0,
+			"ssl_cert_id": 0,
+			"state": "stable",
+			"id": 1,
+			"identity": "magento.example.com",
+			"is_real": true,
+			"meta": {
+				"scope": "virt-guest-cloudaccount"
+			},
+			"ip": "203.0.113.1",
+			"ipv4": "203.0.113.1",
+			"is_dev_account": false,
+			"temp_domain": "example.nxcli.net",
+			"cloudhost_hostname": "cloudhost-example.us-midwest-1.nxcli.net",
+			"unix_username": "abcd1234",
+			"app": {
+				"id": 11,
+				"identity": "Magento 2",
+				"is_real": true,
+				"meta": {
+					"scope": "app-app"
+				},
+				"type": "magento",
+				"status": "active",
+				"name": "Magento",
+				"version": "2",
+				"is_wordpress_based": false,
+				"is_installable": true
+			},
+			"environment": {
+				"software": {
+					"php": {
+						"version": "7.1",
+						"path": "\/opt\/remi\/php71",
+						"cli": "\/opt\/remi\/php71\/root\/usr\/bin\/php"
+					},
+					"redis": {
+						"host": "",
+						"port": "",
+						"socket": "\/var\/run\/redis-multi-abcd1234.redis\/redis.sock",
+						"version": "3.2"
+					}
+				},
+				"options": {
+					"nxcache_nocache": false,
+					"nxcache_varnish": false,
+					"nxcache_varnish_static": false,
+					"nxcache_varnish_ttl": 120,
+					"autoscale_enabled": true
+				},
+				"access": []
+			}
+		},
+		"isolation_zone": {
+			"id": 1,
+			"identity": "Southfield, MI",
+			"is_real": true,
+			"meta": {
+				"scope": "isolation-zone"
+			}
+		},
+		"location": {
+			"id": 3,
+			"identity": "us-midwest-1",
+			"is_real": true,
+			"meta": {
+				"scope": "virt-cloud"
+			},
+			"type": "openstack",
+			"status": "active",
+			"location": "Southfield, MI",
+			"location_code": "us-midwest-1",
+			"country": "US"
+		},
+		"order": {
+			"id": 1,
+			"identity": "(1) Alice McAllison",
+			"is_real": true,
+			"meta": {
+				"scope": "order"
+			},
+			"type": "virt-guest-cloud",
+			"status": "completed",
+			"months": 1
+		},
+		"dev_account_count": 0,
+		"state": "stable",
+		"child_cloud_accounts": [],
+		"has_paypal_subscription": false
+	},
+	"form": {
+		"form_id": 1,
+		"name": "Default",
+		"company_id": 4,
+		"status": "active",
+		"id": 1,
+		"identity": "Default",
+		"is_real": true,
+		"meta": {
+			"scope": "client-service-cancellation-form"
+		},
+		"fields": [{
+			"field_id": 1,
+			"form_id": 1,
+			"display_text": "Which of the following best describes the reason for your cancellation? (check all that apply)",
+			"external_tag": "",
+			"type": "select",
+			"default": "",
+			"default_valid": "no",
+			"required": "yes",
+			"regex": "",
+			"regex_opts": "",
+			"cast": "string",
+			"input_type": "n-a",
+			"min": 1,
+			"max": 0,
+			"display_order": 1,
+			"error_string": "",
+			"status": "enabled",
+			"id": 1,
+			"identity": "Which of the following best describes the reason for your cancellation? (check all that apply)",
+			"is_real": true,
+			"meta": {
+				"scope": "client-service-cancellation-form-field"
+			},
+			"is_required": true,
+			"options": {
+				"1": "Out of business \/ Website shut down",
+				"2": "Service too expensive",
+				"3": "Scaling back my business",
+				"4": "No longer need service",
+				"5": "Nexcess did not meet my needs",
+				"6": "Service problem",
+				"26": "Upgraded\/Downgraded Service",
+				"7": "Other"
+			},
+			"is_multiselect": true
+		}, {
+			"field_id": 2,
+			"form_id": 1,
+			"display_text": "Please provide further details here.",
+			"external_tag": "",
+			"type": "textarea",
+			"default": "",
+			"default_valid": "no",
+			"required": "no",
+			"regex": "",
+			"regex_opts": "",
+			"cast": "string",
+			"input_type": "n-a",
+			"min": 0,
+			"max": "",
+			"display_order": 2,
+			"error_string": "",
+			"status": "enabled",
+			"id": 2,
+			"identity": "Please provide further details here.",
+			"is_real": true,
+			"meta": {
+				"scope": "client-service-cancellation-form-field"
+			},
+			"is_required": false
+		}, {
+			"field_id": 3,
+			"form_id": 1,
+			"display_text": "How would you rate your experience with Nexcess on a scale of 1 to 10 with 10 being the most positive?",
+			"external_tag": "",
+			"type": "text",
+			"default": "",
+			"default_valid": "no",
+			"required": "yes",
+			"regex": "",
+			"regex_opts": "",
+			"cast": "int",
+			"input_type": "n-a",
+			"min": 1,
+			"max": 10,
+			"display_order": 3,
+			"error_string": "",
+			"status": "enabled",
+			"id": 3,
+			"identity": "How would you rate your experience with Nexcess on a scale of 1 to 10 with 10 being the most positive?",
+			"is_real": true,
+			"meta": {
+				"scope": "client-service-cancellation-form-field"
+			},
+			"is_required": true
+		}, {
+			"field_id": 4,
+			"form_id": 1,
+			"display_text": "Would you recommend Nexcess to a friend?",
+			"external_tag": "",
+			"type": "select",
+			"default": "",
+			"default_valid": "no",
+			"required": "yes",
+			"regex": "",
+			"regex_opts": "",
+			"cast": "string",
+			"input_type": "n-a",
+			"min": 1,
+			"max": 1,
+			"display_order": 4,
+			"error_string": "",
+			"status": "enabled",
+			"id": 4,
+			"identity": "Would you recommend Nexcess to a friend?",
+			"is_real": true,
+			"meta": {
+				"scope": "client-service-cancellation-form-field"
+			},
+			"is_required": true,
+			"options": {
+				"8": "Yes",
+				"9": "No"
+			}
+		}, {
+			"field_id": 5,
+			"form_id": 1,
+			"display_text": "Would you consider using Nexcess again?",
+			"external_tag": "",
+			"type": "select",
+			"default": "",
+			"default_valid": "no",
+			"required": "yes",
+			"regex": "",
+			"regex_opts": "",
+			"cast": "string",
+			"input_type": "n-a",
+			"min": 1,
+			"max": 1,
+			"display_order": 5,
+			"error_string": "",
+			"status": "enabled",
+			"id": 5,
+			"identity": "Would you consider using Nexcess again?",
+			"is_real": true,
+			"meta": {
+				"scope": "client-service-cancellation-form-field"
+			},
+			"is_required": true,
+			"options": {
+				"10": "Yes",
+				"11": "No"
+			}
+		}, {
+			"field_id": 6,
+			"form_id": 1,
+			"display_text": "We'd like to know which of our departments met your needs during your time as a customer. (check all that apply)",
+			"external_tag": "",
+			"type": "select",
+			"default": "",
+			"default_valid": "no",
+			"required": "no",
+			"regex": "",
+			"regex_opts": "",
+			"cast": "string",
+			"input_type": "n-a",
+			"min": 0,
+			"max": 0,
+			"display_order": 6,
+			"error_string": "",
+			"status": "enabled",
+			"id": 6,
+			"identity": "We'd like to know which of our departments met your needs during your time as a customer. (check all that apply)",
+			"is_real": true,
+			"meta": {
+				"scope": "client-service-cancellation-form-field"
+			},
+			"is_required": false,
+			"options": {
+				"12": "Client Services\/Support",
+				"13": "Customer Service",
+				"14": "Billing",
+				"15": "Sales",
+				"16": "Senior Support \/ Server Admin",
+				"17": "Managed Services",
+				"18": "Management"
+			},
+			"is_multiselect": true
+		}, {
+			"field_id": 7,
+			"form_id": 1,
+			"display_text": "If you view one of our departments negatively we'd like to know. (check all that apply)",
+			"external_tag": "",
+			"type": "select",
+			"default": "",
+			"default_valid": "no",
+			"required": "no",
+			"regex": "",
+			"regex_opts": "",
+			"cast": "string",
+			"input_type": "n-a",
+			"min": 0,
+			"max": 0,
+			"display_order": 7,
+			"error_string": "",
+			"status": "enabled",
+			"id": 7,
+			"identity": "If you view one of our departments negatively we'd like to know. (check all that apply)",
+			"is_real": true,
+			"meta": {
+				"scope": "client-service-cancellation-form-field"
+			},
+			"is_required": false,
+			"options": {
+				"19": "Customer Support",
+				"20": "Customer Service",
+				"21": "Billing",
+				"22": "Sales",
+				"23": "Senior Support \/ Server Admin",
+				"24": "Managed Services",
+				"25": "Management"
+			},
+			"is_multiselect": true
+		}, {
+			"field_id": 8,
+			"form_id": 1,
+			"display_text": "We always want to improve. Please tell us how we could have made your time with us better.",
+			"external_tag": "",
+			"type": "textarea",
+			"default": "",
+			"default_valid": "no",
+			"required": "no",
+			"regex": "",
+			"regex_opts": "",
+			"cast": "string",
+			"input_type": "n-a",
+			"min": 0,
+			"max": "",
+			"display_order": 8,
+			"error_string": "",
+			"status": "enabled",
+			"id": 8,
+			"identity": "We always want to improve. Please tell us how we could have made your time with us better.",
+			"is_real": true,
+			"meta": {
+				"scope": "client-service-cancellation-form-field"
+			},
+			"is_required": false
+		}]
+	}
+}
