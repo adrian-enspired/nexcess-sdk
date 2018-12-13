@@ -43,8 +43,14 @@ abstract class Endpoint implements Readable {
   /** @var array Default filter values for list(). */
   protected const _BASE_LIST_FILTER = [];
 
-  /** @var string Fully qualified classname of associated Model. */
-  protected const _MODEL_FQCN = '';
+  /**
+   * @var string[] Entity name:fqcn map for this endpoint.
+   *
+   * Entity "names" must match the entity's meta.scope provided by the API.
+   * The "primary" entity (the one nameds by the endpoint's _URI)
+   * MUST be listed first.
+   */
+  protected const _ENTITY_MAP = [];
 
   /** @var string API endpoint. */
   protected const _URI = '';
@@ -80,13 +86,6 @@ abstract class Endpoint implements Readable {
   /**
    * {@inheritDoc}
    */
-  public function getModel(string $name = null) : Modelable {
-    return $this->_client->getModel($name ?? static::_MODEL_FQCN);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public function getParams(string $action) : array {
     $params = static::_PARAMS[$action] ?? [];
     foreach ($params as $param => $info) {
@@ -117,18 +116,19 @@ abstract class Endpoint implements Readable {
       'GET',
       static::_URI . "?{$this->_buildListQuery($filter)}"
     );
-    $collection = new Collection(static::_MODEL_FQCN);
-    foreach (Util::decodeResponse($response) as $data) {
-      if (! is_array($data)) {
-        throw new ApiException(
-          ApiException::GOT_MALFORMED_LIST,
-          ['uri' => static::_URI . "?{$this->_buildListQuery($filter)}"]
-        );
+    try {
+      $collection = new Collection(reset(static::_ENTITY_NAMES));
+      foreach (Util::decodeResponse($response) as $data) {
+        $collection->add($this->getModel()->sync($data));
       }
-      $collection->add($this->getModel()->sync($data));
-    }
 
-    return $collection;
+      return $collection;
+    } catch (Throwable $e) {
+      throw new ApiException(
+        ApiException::GOT_MALFORMED_LIST,
+        ['uri' => static::_URI . "?{$this->_buildListQuery($filter)}"]
+      );
+    }
   }
 
   /**
@@ -190,6 +190,22 @@ abstract class Endpoint implements Readable {
         ]
       );
     }
+  }
+
+  /**
+   * Gets an Entity belonging to this Endpoint.
+   *
+   * @param string $name Entity name (meta.scope)
+   * @return Modelable
+   * @throws SdkException If the entity is unknown
+   */
+  protected function _getEntity(string $name = null) : Modelable {
+    $name = static::_ENTITY_MAP[$name] ?? $name;
+    if (! is_a($name, Modelable::class, true)) {
+      throw new SdkException(SdkException::NO_SUCH_MODEL, ['name' => $name]);
+    }
+
+    return new $name($this);
   }
 
   /**

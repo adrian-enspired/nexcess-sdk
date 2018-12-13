@@ -12,7 +12,7 @@ namespace Nexcess\Sdk\Resource;
 use Nexcess\Sdk\ {
   ApiException,
   Resource\Collector as Collection,
-  Resource\Modelable as Model
+  Resource\Modelable
 };
 
 /**
@@ -28,12 +28,12 @@ interface Readable {
   public static function moduleName() : string;
 
   /**
-   * Gets a new (empty) Model instance.
+   * Gets a new (empty) Modelable instance.
    *
-   * @param string|null $name Model name (base name or fully qualified)
-   * @return Model
+   * @param string|null $name Modelable name (scope or fqcn)
+   * @return Modelable
    */
-  public function getModel(string $name = null) : Model;
+  public function getEntity(string $name = null) : Modelable;
 
   /**
    * Gets a list of parameters and their descriptions for an action.
@@ -46,8 +46,8 @@ interface Readable {
   /**
    * Fetches a paginated list of items from the API.
    *
-   * @param array $filter Pagination and Model-specific filter options
-   * @return Collection Models returned from the API
+   * @param array $filter Pagination and Modelable-specific filter options
+   * @return Collection Modelables returned from the API
    * @throws ApiException If API request fails
    */
   public function list(array $filter = []) : Collection;
@@ -56,10 +56,10 @@ interface Readable {
    * Fetches an item from the API.
    *
    * @param int $id Item id
-   * @return Model A new model read from the API
+   * @return Modelable A new model read from the API
    * @throws ApiException If the API request fails (e.g., item doesn't exist)
    */
-  public function retrieve(int $id) : Model;
+  public function retrieve(int $id) : Modelable;
 
   /**
    * Re-fetches a resource from the API.
@@ -68,8 +68,8 @@ interface Readable {
    * but it WILL NOT UPDATE the API with the model's current state.
    * To save changes to an updatable model, @see Updatable::update
    *
-   * @param Model $model The Model to sync
-   * @return Model The sync'd model
+   * @param Modelable $model The Modelable to sync
+   * @return Modelable The sync'd model
    */
-  public function sync(Model $model) : Model;
+  public function sync(Modelable $model) : Modelable;
 }

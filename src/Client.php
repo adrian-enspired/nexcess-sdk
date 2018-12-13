@@ -36,25 +36,13 @@ use Nexcess\Sdk\ {
   Resource\Updatable,
   SdkException,
   Util\Config,
+  Util\EndpointRepository,
   Util\Language,
   Util\Util
 };
 
 /**
- * API client for nexcess.net / thermo.io
- *
- * API Endpoints. These are created on first access.
- *
- * @property Endpoint $ApiToken
- * @property Endpoint $CloudAccount
- * @property Endpoint $CloudServer
- *
- * Proxies for List|Create|Retrieve|Update actions on an API Endpoint.
- * Argument may be one of:
- *  - array: Create a new Model from given key:value map.
- *  - int: Id for a Model to retrieve from the API.
- *  - Modelable: A Model with modified properties to submit to the API.
- *  - void: Omit the argument to get a list of Models from the API.
+ * API client for nexcess.net / thermo.io.
  */
 class Client {
 
@@ -64,17 +52,8 @@ class Client {
   /** @var string SDK root directory. */
   public const DIR = __DIR__;
 
-  /** @var string Base namespace for resource modules. */
-  public const RESOURCE_NAMESPACE = __NAMESPACE__ . '\\Resource';
-
   /** @var string Sdk version. */
   public const SDK_VERSION = '0.1-alpha';
-
-  /** @var string Format for request debug messages. */
-  protected const _DEBUG_REQUEST_FORMAT = "----------\n{request}";
-
-  /** @var string Format for response debug messages. */
-  protected const _DEBUG_RESPONSE_FORMAT = "{response}\n----------";
 
   /** @var Config Client configuration object. */
   protected $_config;
@@ -85,8 +64,8 @@ class Client {
   /** @var callable[] List of debug listeners. */
   protected $_debug_listeners = [];
 
-  /** @var Endpoint[] Cache of Endpoint instances. */
-  protected $_endpoints = [];
+  /** @var EndpointRepository Repository of Endpoints. */
+  protected $_endpoints;
 
   /** @var Language Language object. */
   protected $_language;
@@ -100,78 +79,8 @@ class Client {
   public function __construct(Config $config) {
     $this->_config = $config;
     $this->_client = $this->_newGuzzleClient();
+    $this->_endpoints = $this->_newEndpointRepository();
     $this->_setLanguageHandler();
-  }
-
-  /**
-   * {@inheritDoc}
-   * @see https://php.net/__call
-   * Allows create/read/update actions to be accessed as a method call.
-   *
-   * @example <?php
-   *  // get a list of existing items
-   *  $tokens = $Client->ApiToken();
-   *
-   *  // create a new item
-   *  $token = $Client->ApiToken(['name' => 'foo']);
-   *
-   *  // read an existing item
-   *  $token = $Client->ApiToken(1);
-   *
-   *  // update an existing item
-   *  $token['name'] = 'bar';
-   *  $Client->ApiToken($token);
-   *
-   * @param string $name Endpoint classname (short name or fully qualified)
-   * @param array $args Arguments for create/read/update action
-   * @return Modelable|Collector On success
-   * @throws SdkException If Endpoint is unknown
-   * @throws ApiException If API request fails
-   * @throws SdkException If Model cannot be created/updated
-   */
-  public function __call($name, $args) {
-    $endpoint = $this->getEndpoint($name);
-    $arg = array_shift($args);
-
-    if ($arg === null) {
-      return $endpoint->list();
-    }
-
-    if (is_int($arg)) {
-      return $endpoint->retrieve($arg);
-    }
-
-    if (is_array($arg)) {
-      if (! $endpoint instanceof Creatable) {
-        throw new ApiException(
-          ApiException::ENDPOINT_NOT_WRITABLE,
-          ['endpoint' => $name]
-        );
-      }
-
-      // @phan-suppress-next-line PhanUndeclaredMethod
-      return $endpoint->create($arg);
-    }
-
-    if ($arg instanceof Modelable) {
-      if (! $endpoint instanceof Updatable) {
-        throw new ApiException(
-          ApiException::ENDPOINT_NOT_WRITABLE,
-          ['endpoint' => $name]
-        );
-      }
-
-      return $endpoint->update($arg);
-    }
-
-    throw new ApiException(
-      ApiException::WRONG_CALL_ARG,
-      [
-        'class' => __CLASS__,
-        'expected' => 'null|int|array|Modelable',
-        'type' => Util::type($arg)
-      ]
-    );
   }
 
   /**
@@ -187,7 +96,7 @@ class Client {
    * @throws SdkException If Endpoint is unknown
    */
   public function __get(string $name) : Endpoint {
-    return $this->getEndpoint($name);
+    return $this->getEndpoints()->$name;
   }
 
   /**
@@ -252,61 +161,12 @@ class Client {
   }
 
   /**
-   * Gets an API endpoint.
+   * Gets repository for API Endpoints.
    *
-   * For convenience, endpoints can also be accessed as Client properties.
-   * @see Client::__get
-   *
-   * @param string $name Endpoint FQCN or module name
-   * @return Endpoint
-   * @throws SdkException If the endpoint is unknown
+   * @return EndpointRepository
    */
-  public function getEndpoint(string $name) : Endpoint {
-    if (is_a($name, Endpoint::class, true)) {
-      $endpoint = $name;
-    } else {
-      $endpoint = static::RESOURCE_NAMESPACE . "\\{$name}\\Endpoint";
-
-      if (! is_a($endpoint, Endpoint::class, true)) {
-        throw new SdkException(
-          SdkException::NO_SUCH_ENDPOINT,
-          ['name' => $name]
-        );
-      }
-    }
-
-    $module = $endpoint::moduleName();
-    if (empty($this->_endpoints[$module])) {
-      $this->_endpoints[$module] =
-        new $endpoint($this, $this->_config);
-    }
-
-    return $this->_endpoints[$module];
-  }
-
-  /**
-   * Gets an API resource.
-   *
-   * This method should *always* be used to build models
-   * (as opposed to using `new`),
-   * as it will associate them with their correct endpoint(s) automatically.
-   *
-   * @param string $name Entity FQCN or module name
-   * @return Modelable
-   * @throws SdkException If the model is unknown
-   */
-  public function getModel(string $name) : Modelable {
-    if (is_a($name, Modelable::class, true)) {
-      $model = $name;
-    } else {
-      $model = static::RESOURCE_NAMESPACE . "\\{$name}\\{$name}";
-
-      if (! is_a($model, Modelable::class, true)) {
-        throw new SdkException(SdkException::NO_SUCH_MODEL, ['name' => $name]);
-      }
-    }
-
-    return new $model($this->getEndpoint($model::moduleName()));
+  public function getEndpoints() : EndpointRepository {
+    return $this->_endpoints;
   }
 
   /**
@@ -444,14 +304,14 @@ class Client {
     return function (callable $handler) {
       return function (GuzzleRequest $request, array $options) use ($handler) {
         $this->debug(
-          (new GuzzleFormatter(self::_DEBUG_REQUEST_FORMAT))
+          (new GuzzleFormatter("----------\n{request}"))
             ->format($request, new GuzzleResponse())
         );
         $promised_response = $handler($request, $options);
         return $promised_response->then(
           function (GuzzleResponse $response) use ($request) {
             $this->debug(
-              (new GuzzleFormatter(self::_DEBUG_RESPONSE_FORMAT))
+              (new GuzzleFormatter("{response}\n----------"))
                 ->format($request, $response)
             );
             return $response;
@@ -480,6 +340,10 @@ class Client {
     }
 
     return $headers;
+  }
+
+  protected function _newEndpointRepository() : EndpointRepository {
+    return new EndpointRepository($this);
   }
 
   /**
