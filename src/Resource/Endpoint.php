@@ -31,6 +31,9 @@ abstract class Endpoint implements Readable {
   /** @var string Name of resource module this endpoint belongs to. */
   public const MODULE_NAME = '';
 
+  /** @var string Name (meta.scope) of this module's primary entity. */
+  public const MODULE_SCOPE = '';
+
   /** @var int Key for parameter type. */
   public const PARAM_TYPE = 0;
 
@@ -43,13 +46,7 @@ abstract class Endpoint implements Readable {
   /** @var array Default filter values for list(). */
   protected const _BASE_LIST_FILTER = [];
 
-  /**
-   * @var string[] Entity name:fqcn map for this endpoint.
-   *
-   * Entity "names" must match the entity's meta.scope provided by the API.
-   * The "primary" entity (the one nameds by the endpoint's _URI)
-   * MUST be listed first.
-   */
+  /** @var string[] Entity name:fqcn map for this endpoint. */
   protected const _ENTITY_MAP = [];
 
   /** @var string API endpoint. */
@@ -81,6 +78,35 @@ abstract class Endpoint implements Readable {
   public function __construct(Client $client, Config $config) {
     $this->_client = $client;
     $this->_config = $config;
+  }
+
+  /**
+   * Gets an Entity belonging to this Endpoint.
+   *
+   * @param string $name Entity name (meta.scope)
+   * @return Modelable
+   * @throws SdkException If the entity is unknown
+   */
+  public function getEntity(string $name = null) : Modelable {
+    $name = static::_ENTITY_MAP[$name] ?? $name;
+    if (! is_a($name, Modelable::class, true)) {
+      throw new SdkException(SdkException::NO_SUCH_MODEL, ['name' => $name]);
+    }
+
+    // belongs to this Endpoint
+    $module = $name::moduleName();
+    if ($module === static::MODULE_NAME) {
+      return new $name($this);
+    }
+
+    // belongs to another Endpoint
+    $endpoints = $this->_client->getEndpoints();
+    if (method_exists($endpoints, $module)) {
+      return $endpoints->{$module}()->getEntity($name);
+    }
+
+    // is an Entity but we don't know what Endpoint it belongs to
+    return new $name();
   }
 
   /**
@@ -190,22 +216,6 @@ abstract class Endpoint implements Readable {
         ]
       );
     }
-  }
-
-  /**
-   * Gets an Entity belonging to this Endpoint.
-   *
-   * @param string $name Entity name (meta.scope)
-   * @return Modelable
-   * @throws SdkException If the entity is unknown
-   */
-  protected function _getEntity(string $name = null) : Modelable {
-    $name = static::_ENTITY_MAP[$name] ?? $name;
-    if (! is_a($name, Modelable::class, true)) {
-      throw new SdkException(SdkException::NO_SUCH_MODEL, ['name' => $name]);
-    }
-
-    return new $name($this);
   }
 
   /**

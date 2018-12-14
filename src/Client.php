@@ -84,22 +84,6 @@ class Client {
   }
 
   /**
-   * @see https://php.net/__get
-   * Allows endpoints to be accessed as properties.
-   *
-   * @example <?php
-   *  // get the "api-token" endpoint
-   *  $endpoint = $Client->ApiToken;
-   *
-   * @param string $name Endpoint classname (short name or fully qualified)
-   * @return Endpoint on success
-   * @throws SdkException If Endpoint is unknown
-   */
-  public function __get(string $name) : Endpoint {
-    return $this->getEndpoints()->$name;
-  }
-
-  /**
    * Adds a debug listener.
    * Note, listeners will only be called in debug mode.
    *

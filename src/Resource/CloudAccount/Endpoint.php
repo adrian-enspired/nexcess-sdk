@@ -175,6 +175,15 @@ class Endpoint extends BaseEndpoint implements Creatable {
   }
 
   /**
+   * Gets a new Backup entity.
+   *
+   * @return Backup
+   */
+  public function getBackupEntity() : Backup {
+    return $this->getEntity(Backup::class);
+  }
+
+  /**
    * Return a list of backups
    *
    * @param CloudAccount $cloudaccount Cloud server instance

@@ -22,6 +22,9 @@ use Nexcess\Sdk\ {
 
 abstract class Model implements Modelable {
 
+  /** @var string Entity name (meta.scope). */
+  public const ENTITY_NAME = '';
+
   /** @var string Module name. */
   public const MODULE_NAME = '';
 
@@ -37,7 +40,7 @@ abstract class Model implements Modelable {
   /** @var string[] Map of property model names:model classes. */
   protected const _PROPERTY_MODELS = [];
 
-  /** @var string[] List of property names. */
+  /** @var string[] List of read+writable property names. */
   protected const _PROPERTY_NAMES = [];
 
   /** @var string[] List of readonly property names. */
@@ -66,6 +69,13 @@ abstract class Model implements Modelable {
     $model->_endpoint = $data['_endpoint'] ?? null;
     $model->_values = $data['_values'] ?? [];
     return $model;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function entityName() : string {
+    return static::ENTITY_NAME;
   }
 
   /**
@@ -507,7 +517,6 @@ abstract class Model implements Modelable {
     if (is_int($value)) {
       $value = ['id' => $value];
     }
-
     if (is_array($value)) {
       return $this->_getModel($fqcn)->sync($value);
     }
@@ -526,7 +535,7 @@ abstract class Model implements Modelable {
    */
   protected function _getModel(string $fqcn) : Modelable {
     return $this->_hasEndpoint() ?
-      $this->_getEndpoint()->getModel($fqcn) :
+      $this->_getEndpoint()->getEntity($fqcn) :
       new $fqcn();
   }
 

@@ -36,6 +36,23 @@ class EndpointRepository {
   /** @var Endpoint[] Endpoint cache. */
   protected $_endpoints = [];
 
+  /** @var string[] Endpoint scope:fqcn map. */
+  protected const _ENDPOINT_MAP = [
+    ApiToken::MODULE_SCOPE => ApiToken::class,
+    App::MODULE_SCOPE => App::class,
+    Client::MODULE_SCOPE => Client::class,
+    Cloud::MODULE_SCOPE => Cloud::class,
+    CloudAccount::MODULE_SCOPE => CloudAccount::class,
+    CloudServer::MODULE_SCOPE => CloudServer::class,
+    Invoice::MODULE_SCOPE => Invoice::class,
+    Order::MODULE_SCOPE => Order::class,
+    Package::MODULE_SCOPE => Package::class,
+    Service::MODULE_SCOPE => Service::class,
+    Ssl::MODULE_SCOPE => Ssl::class,
+    User::MODULE_SCOPE => User::class,
+    VirtGuestCloud::MODULE_SCOPE => VirtGuestCloud::class
+  ];
+
   /**
    * @param SdkClient $client SDK Client instance
    */
@@ -50,7 +67,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function ApiToken() : ApiToken {
-    return $this->_getEndpoint('ApiToken');
+    return $this->getEndpoint('ApiToken');
   }
 
   /**
@@ -60,7 +77,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function App() : App {
-    return $this->_getEndpoint('App');
+    return $this->getEndpoint('App');
   }
 
   /**
@@ -70,7 +87,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function Client() : Client {
-    return $this->_getEndpoint('Client');
+    return $this->getEndpoint('Client');
   }
 
   /**
@@ -80,7 +97,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function Cloud() : Cloud {
-    return $this->_getEndpoint('Cloud');
+    return $this->getEndpoint('Cloud');
   }
 
   /**
@@ -90,7 +107,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function CloudAccount() : CloudAccount {
-    return $this->_getEndpoint('CloudAccount');
+    return $this->getEndpoint('CloudAccount');
   }
 
   /**
@@ -100,7 +117,26 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function CloudServer() : CloudServer {
-    return $this->_getEndpoint('CloudServer');
+    return $this->getEndpoint('CloudServer');
+  }
+
+  /**
+   * Gets an API Endpoint instance, creating it if it doesn't yet exist.
+   *
+   * @param string $name Endpoint module name or scope
+   * @return Endpoint
+   */
+  public function getEndpoint(string $name) : Endpoint {
+    // map module scope → module name
+    $name = isset(static::_ENDPOINT_MAP[$name]) ?
+      static::_ENDPOINT_MAP[$name]::moduleName() :
+      $name;
+
+    if (! isset($this->_endpoints[$name])) {
+      $this->_initializeEndpoint($name);
+    }
+
+    return $this->_endpoints[$name];
   }
 
   /**
@@ -110,7 +146,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function Invoice() : Invoice {
-    return $this->_getEndpoint('Invoice');
+    return $this->getEndpoint('Invoice');
   }
 
   /**
@@ -120,7 +156,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function Order() : Order {
-    return $this->_getEndpoint('Order');
+    return $this->getEndpoint('Order');
   }
 
   /**
@@ -130,7 +166,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function Package() : Package {
-    return $this->_getEndpoint('Package');
+    return $this->getEndpoint('Package');
   }
 
   /**
@@ -140,7 +176,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function Service() : Service {
-    return $this->_getEndpoint('Service');
+    return $this->getEndpoint('Service');
   }
 
   /**
@@ -150,7 +186,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function Ssl() : Ssl {
-    return $this->_getEndpoint('Ssl');
+    return $this->getEndpoint('Ssl');
   }
 
   /**
@@ -160,7 +196,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function User() : User {
-    return $this->_getEndpoint('User');
+    return $this->getEndpoint('User');
   }
 
   /**
@@ -170,21 +206,7 @@ class EndpointRepository {
    * @throws SdkException If endpoint is not found
    */
   public function VirtGuestCloud() : VirtGuestCloud {
-    return $this->_getEndpoint('VirtGuestCloud');
-  }
-
-  /**
-   * Gets an API Endpoint instance, creating it if it doesn't yet exist.
-   *
-   * @param string $name Endpoint module name
-   * @return Endpoint
-   */
-  protected function _getEndpoint(string $name) : Endpoint {
-    if (! isset($this->_endpoints[$name])) {
-      $this->_initializeEndpoint($name);
-    }
-
-    return $this->_endpoints[$name];
+    return $this->getEndpoint('VirtGuestCloud');
   }
 
   /**
